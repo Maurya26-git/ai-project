@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Sentix - AI Sentiment Intelligence Platform</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        },
+                        obsidian: {
+                            800: '#131915',
+                            900: '#090e0c',
+                            950: '#040605'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js & Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom CSS & Motion Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-[#f4f7f5] dark:bg-[#040605] text-slate-900 dark:text-zinc-100 min-h-screen flex flex-col font-sans antialiased transition-colors duration-300 relative overflow-x-hidden selection:bg-emerald-500/30 selection:text-emerald-300">
+
+    <!-- Interactive Motion Canvas (Golden Constellation & Reactive Particles) -->
+    <canvas id="motion-canvas"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full border-b border-emerald-500/20 dark:border-emerald-500/20 bg-white/80 dark:bg-[#0d0e12]/85 backdrop-blur-xl shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- Brand -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-green-500 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30 float-animation border border-emerald-400/40">
+                    <i data-lucide="crown" class="w-6 h-6 stroke-[2.2]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-black tracking-tight text-shimmer-emerald">Sentix</span>
+                        <span class="text-[10px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 shadow-sm">Emerald v2.7</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 hidden sm:block font-medium">AI Sentiment & Emotion Intelligence Hub</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="hidden lg:flex items-center space-x-1">
+                <button data-tab="tab-catalog" class="nav-tab-btn active px-3.5 py-2 text-xs font-bold rounded-xl border-b-2 border-emerald-500 text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5 transition">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400"></i> Explore & Review Hub
+                </button>
+                <button data-tab="tab-live" class="nav-tab-btn px-3.5 py-2 text-xs font-semibold rounded-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1.5 transition">
+                    <i data-lucide="activity" class="w-4 h-4"></i> Live Analyzer
+                </button>
+                <button data-tab="tab-batch" class="nav-tab-btn px-3.5 py-2 text-xs font-semibold rounded-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1.5 transition">
+                    <i data-lucide="layers" class="w-4 h-4"></i> Batch & Datasets
+                </button>
+                <button data-tab="tab-compare" class="nav-tab-btn px-3.5 py-2 text-xs font-semibold rounded-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1.5 transition">
+                    <i data-lucide="git-compare" class="w-4 h-4"></i> Compare
+                </button>
+                <button data-tab="tab-api" class="nav-tab-btn px-3.5 py-2 text-xs font-semibold rounded-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1.5 transition">
+                    <i data-lucide="terminal" class="w-4 h-4"></i> API Bench
+                </button>
+                <button data-tab="tab-history" class="nav-tab-btn px-3.5 py-2 text-xs font-semibold rounded-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1.5 transition">
+                    <i data-lucide="history" class="w-4 h-4"></i> History
+                </button>
+                <button data-tab="tab-academic" class="nav-tab-btn px-3.5 py-2 text-xs font-semibold rounded-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100 flex items-center gap-1.5 transition">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Academic NLP</span>
+                    <span class="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Prof Mode</span>
+                </button>
+            </nav>
+
+            <!-- Right utilities -->
+            <div class="flex items-center gap-2">
+                <!-- QR Code & Remote Network Access Button -->
+                <button id="btn-open-qr-modal" class="px-3 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition shadow-sm glow-emerald" title="Share via QR Code for Different Networks">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Share Access</span>
+                </button>
+
+                <!-- Gemini Key Trigger -->
+                <button onclick="openGeminiModal()" class="px-3 py-1.5 rounded-xl border border-emerald-500/20 bg-white/80 dark:bg-zinc-900/80 hover:bg-emerald-500/15 text-slate-700 dark:text-zinc-300 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm" title="Configure Gemini LLM API Key">
+                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span class="hidden sm:inline">Gemini AI</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle-btn" class="p-2 rounded-xl border border-emerald-500/25 text-emerald-500 dark:text-emerald-400 hover:bg-emerald-500/10 transition" title="Toggle Dark/Light Mode">
+                    <span id="theme-toggle-icon"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Row -->
+        <div class="lg:hidden flex overflow-x-auto border-t border-emerald-500/20 px-2 py-1 space-x-1 scrollbar-none">
+            <button data-tab="tab-catalog" class="nav-tab-btn active px-3 py-1.5 text-xs font-bold rounded-lg border-b-2 border-emerald-500 text-emerald-500 whitespace-nowrap">Catalog</button>
+            <button data-tab="tab-live" class="nav-tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg border-b-2 border-transparent text-slate-500 whitespace-nowrap">Live Analyzer</button>
+            <button data-tab="tab-batch" class="nav-tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg border-b-2 border-transparent text-slate-500 whitespace-nowrap">Batch</button>
+            <button data-tab="tab-compare" class="nav-tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg border-b-2 border-transparent text-slate-500 whitespace-nowrap">Compare</button>
+            <button data-tab="tab-api" class="nav-tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg border-b-2 border-transparent text-slate-500 whitespace-nowrap">API</button>
+            <button data-tab="tab-history" class="nav-tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg border-b-2 border-transparent text-slate-500 whitespace-nowrap">History</button>
+            <button data-tab="tab-academic" class="nav-tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg border-b-2 border-transparent text-slate-500 whitespace-nowrap">🎓 Academic</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
+
+        <!-- ==================================================================== -->
+        <!-- TAB 0: EXPLORE & REVIEW HUB (ELECTRONICS & MOVIES)                     -->
+        <!-- ==================================================================== -->
+        <div id="tab-catalog" class="tab-pane">
+            <div class="flex flex-col gap-6">
+                
+                <!-- Hero Banner with Gold Obsidian Styling -->
+                <div class="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-r from-zinc-950 via-[#14120e] to-zinc-900 text-white p-6 sm:p-8 shadow-2xl">
+                    <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+                    <div class="relative z-10 max-w-2xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mb-3 backdrop-blur-md">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-300"></i> Interactive Selection Flow
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">Select Any Item to Analyze & Log in History</h2>
+                        <p class="text-xs sm:text-sm text-zinc-300 mt-2 leading-relaxed">
+                            Click on any mobile phone, audio gadget, blockbuster movie, or video game: it instantly loads into the **Live Analyzer**, performs multi-dimensional sentiment scoring, and updates your persistent **History** log automatically!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section Selector & Filter Toolbar -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md backdrop-blur-xl">
+                    
+                    <!-- Type Switcher (Electronics vs Movies vs Games) -->
+                    <div class="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100 dark:bg-zinc-950/80 border border-emerald-500/20 w-full sm:w-auto overflow-x-auto">
+                        <button id="catalog-tab-electronics" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 shadow-md transition flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> ⚡ Electronics
+                        </button>
+                        <button id="catalog-tab-movies" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold bg-transparent text-slate-600 dark:text-zinc-400 hover:text-emerald-400 transition flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i data-lucide="film" class="w-3.5 h-3.5"></i> 🎬 Movies
+                        </button>
+                        <button id="catalog-tab-games" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold bg-transparent text-slate-600 dark:text-zinc-400 hover:text-emerald-400 transition flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i> 🎮 Video Games
+                        </button>
+                        <button id="catalog-tab-travel" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold bg-transparent text-slate-600 dark:text-zinc-400 hover:text-emerald-400 transition flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i data-lucide="plane" class="w-3.5 h-3.5"></i> 🌍 World Places
+                        </button>
+                    </div>
+
+                    <!-- Subcategory Pills -->
+                    <div id="catalog-filter-pills" class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto scrollbar-none pb-1 md:pb-0">
+                        <button data-subcat="all" class="subcat-pill active px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-500 text-slate-950 shadow-sm transition">All Electronics</button>
+                        <button data-subcat="mobiles" class="subcat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-emerald-500/20 transition">📱 Mobiles</button>
+                        <button data-subcat="gadgets" class="subcat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-emerald-500/20 transition">🎧 Gadgets & Audio</button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-64">
+                        <input type="text" id="catalog-search-input" placeholder="Search by name, spec, or director..." class="w-full pl-8 pr-3 py-2 rounded-2xl border border-emerald-500/25 bg-slate-50 dark:bg-zinc-950 text-xs outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-zinc-100 placeholder-zinc-500">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-emerald-500/70 absolute left-2.5 top-3"></i>
+                    </div>
+
+                </div>
+
+                <!-- Universal Search AI Dossier Banner -->
+                <div id="universal-search-banner" class="hidden p-4 rounded-3xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 via-zinc-950 to-emerald-950/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl backdrop-blur-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 flex-shrink-0 glow-emerald">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-emerald-300"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black text-white flex items-center gap-2">
+                                Universal AI Entity Synthesis
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Any Entity Worldwide</span>
+                            </h4>
+                            <p class="text-[11px] text-zinc-300 mt-0.5">
+                                Can't find <span id="universal-search-query-name" class="font-extrabold text-emerald-400">"..."</span> in preloaded library? Synthesize live specs, authentic posters, and NLP-analyzed sentiment reviews on the fly!
+                            </p>
+                        </div>
+                    </div>
+                    <button id="btn-trigger-universal-synthesize" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/25 transition whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Synthesize Dossier
+                    </button>
+                </div>
+
+                <!-- Items Grid Container -->
+                <div id="catalog-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB 1: LIVE ANALYZER                                                 -->
+        <!-- ==================================================================== -->
+        <div id="tab-live" class="tab-pane hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Input Panel (5 cols) -->
+                <div class="lg:col-span-5 flex flex-col gap-5">
+                    
+                    <!-- Text Input Box -->
+                    <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md backdrop-blur-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <label for="sentiment-text-input" class="text-xs font-extrabold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5 text-emerald-500"></i> Enter Feedback or Text
+                            </label>
+                            
+                            <!-- Realtime Audio / Energy Waveform Visualizer -->
+                            <div class="flex items-center gap-2">
+                                <div id="sentiment-wave-bars" class="flex items-center gap-0.5 h-5 px-1.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20" title="Sentiment Signal Energy"></div>
+                                <label class="inline-flex items-center cursor-pointer text-[11px] text-slate-500 dark:text-zinc-400">
+                                    <input type="checkbox" id="chk-auto-analyze" checked class="sr-only peer">
+                                    <div class="w-7 h-4 bg-zinc-300 peer-focus:outline-none rounded-full peer dark:bg-zinc-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-zinc-700 peer-checked:bg-emerald-500"></div>
+                                    <span class="ml-1.5 font-bold text-emerald-400">Live</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <textarea id="sentiment-text-input" rows="6" placeholder="Type or paste any customer review, product feedback, tweet, or message here..." class="w-full p-3.5 rounded-2xl border border-emerald-500/20 dark:border-emerald-500/25 bg-slate-50/70 dark:bg-zinc-950/70 text-slate-900 dark:text-zinc-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition resize-y"></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-2.5">
+                            <span id="word-char-counter" class="text-[11px] text-zinc-400 font-medium">0 words · 0 characters</span>
+                            <div class="flex items-center gap-2">
+                                <button id="btn-clear-text" class="px-2.5 py-1.5 text-xs text-zinc-400 hover:text-zinc-100 transition">Clear</button>
+                                <button id="btn-analyze-now" class="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-green-600 hover:from-emerald-600 hover:to-green-700 text-slate-950 font-black text-xs shadow-md shadow-emerald-500/30 transition flex items-center gap-1.5">
+                                    <span id="live-spinner" class="hidden animate-spin w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full"></span>
+                                    <span>Analyze Now</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset Samples -->
+                    <div class="p-4 rounded-3xl border border-emerald-500/20 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                        <div class="text-[11px] font-black uppercase tracking-wider text-emerald-500 dark:text-emerald-400 mb-2.5 flex items-center gap-1">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i> Quick Test Scenarios
+                        </div>
+                        <div id="preset-pills-container" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+
+                    <!-- Token Highlighter Card -->
+                    <div class="p-4 rounded-3xl border border-emerald-500/20 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 flex items-center gap-1">
+                                <i data-lucide="highlighter" class="w-3.5 h-3.5 text-emerald-400"></i> Sentiment Token Highlighting
+                            </span>
+                            <div class="flex items-center gap-1.5 text-[10px] text-zinc-400">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> Pos
+                                <span class="w-2 h-2 rounded-full bg-rose-500 inline-block ml-1"></span> Neg
+                                <span class="w-2 h-2 rounded-full bg-green-300 inline-block ml-1"></span> Intensifier
+                            </div>
+                        </div>
+                        <div id="token-highlight-container" class="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-zinc-950/70 border border-emerald-500/15 min-h-[90px] text-xs leading-relaxed overflow-y-auto max-h-48">
+                            <span class="text-zinc-500 italic">Analyzed words will be highlighted here in real time.</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Results Panel (7 cols) -->
+                <div class="lg:col-span-7 flex flex-col gap-5">
+                    
+                    <!-- Placeholder when empty -->
+                    <div id="analysis-placeholder" class="h-full min-h-[420px] p-8 rounded-3xl border border-dashed border-emerald-500/30 flex flex-col items-center justify-center text-center bg-white/40 dark:bg-zinc-900/40">
+                        <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-4 border border-emerald-500/30">
+                            <i data-lucide="bar-chart-2" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-zinc-100">Awaiting Feedback Input</h3>
+                        <p class="text-xs text-zinc-400 max-w-sm mt-1">
+                            Select any item from the **Explore Hub** or type in the box to inspect the continuous compound gauge, emotions, and aspects.
+                        </p>
+                    </div>
+
+                    <!-- Dynamic Results Box -->
+                    <div id="analysis-results-container" class="hidden flex flex-col gap-5">
+                        
+                        <!-- Top KPI & Speedometer Card -->
+                        <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md backdrop-blur-xl grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                            
+                            <!-- Speedometer Arc (5 cols) -->
+                            <div class="md:col-span-5 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-emerald-500/15 pb-4 md:pb-0 md:pr-4">
+                                <div class="gauge-meter-wrapper">
+                                    <svg viewBox="0 0 200 100" class="w-full">
+                                        <defs>
+                                            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="#EF4444" />
+                                                <stop offset="35%" stop-color="#F87171" />
+                                                <stop offset="50%" stop-color="#71717a" />
+                                                <stop offset="65%" stop-color="#fbbf24" />
+                                                <stop offset="100%" stop-color="#f59e0b" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#27272a" stroke-width="14" stroke-linecap="round"/>
+                                        <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round"/>
+                                    </svg>
+                                    <div id="gauge-needle" class="gauge-needle"></div>
+                                    <div class="gauge-pivot ripple-indicator"></div>
+                                </div>
+                                <div class="flex items-center justify-between w-48 text-[10px] font-bold text-zinc-400 mt-1">
+                                    <span>-1.0 (Neg)</span>
+                                    <span>0 (Neu)</span>
+                                    <span>+1.0 (Pos)</span>
+                                </div>
+                            </div>
+
+                            <!-- Score details (7 cols) -->
+                            <div class="md:col-span-7 flex flex-col justify-center">
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span id="result-sentiment-badge" class="px-3 py-1 rounded-full text-xs font-black border transition shadow-sm">
+                                        Neutral
+                                    </span>
+                                    <span id="ml-prediction-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                        ML Model: Positive (91%)
+                                    </span>
+                                </div>
+
+                                <div class="flex items-baseline gap-2 mb-3">
+                                    <span class="text-xs text-zinc-400 font-semibold">Compound Valence:</span>
+                                    <span id="result-compound-score" class="text-3xl font-black tracking-tight text-emerald-400">+0.84</span>
+                                    <span class="text-xs text-zinc-400 ml-auto font-medium">Confidence: <strong id="result-confidence-percent" class="text-zinc-100 font-bold">92%</strong></span>
+                                </div>
+
+                                <div class="w-full h-2.5 rounded-full overflow-hidden flex bg-zinc-800 mb-2">
+                                    <div id="bar-pos-score" class="h-full bg-emerald-500 transition-all duration-500" style="width: 70%"></div>
+                                    <div id="bar-neu-score" class="h-full bg-zinc-500 transition-all duration-500" style="width: 20%"></div>
+                                    <div id="bar-neg-score" class="h-full bg-rose-500 transition-all duration-500" style="width: 10%"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] text-zinc-400 font-semibold">
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Pos: <strong id="text-pos-score" class="text-emerald-400">70%</strong></span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-500"></span> Neu: <strong id="text-neu-score" class="text-zinc-300">20%</strong></span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Neg: <strong id="text-neg-score" class="text-rose-400">10%</strong></span>
+                                </div>
+
+                                <div class="mt-3 pt-3 border-t border-emerald-500/15">
+                                    <div class="flex justify-between text-[11px] mb-1">
+                                        <span class="text-zinc-400">Subjectivity:</span>
+                                        <span id="text-subjectivity-score" class="font-bold text-emerald-300">75% (Subjective)</span>
+                                    </div>
+                                    <div class="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                                        <div id="bar-subjectivity-score" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emotion Radar & Tone Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                            
+                            <!-- Emotion Chart (6 cols) -->
+                            <div class="md:col-span-6 p-4 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 flex items-center gap-1">
+                                        <i data-lucide="heart" class="w-3.5 h-3.5 text-emerald-400"></i> Emotion Radar
+                                    </span>
+                                    <span class="text-xs">
+                                        Dominant: <strong id="dominant-emotion-text" class="text-emerald-400 font-bold">Joy</strong>
+                                    </span>
+                                </div>
+                                <div class="w-full h-52 relative">
+                                    <canvas id="emotionRadarChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Tone & Nuance Tags (6 cols) -->
+                            <div class="md:col-span-6 p-4 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 flex items-center gap-1">
+                                            <i data-lucide="tag" class="w-3.5 h-3.5 text-emerald-400"></i> Tone & Sarcasm Classification
+                                        </span>
+                                    </div>
+                                    <div id="tone-tags-container" class="flex flex-wrap gap-2"></div>
+                                </div>
+
+                                <div class="mt-4 pt-3 border-t border-emerald-500/15 text-xs text-zinc-400 flex items-center justify-between">
+                                    <span>Linguistic Engine:</span>
+                                    <span class="font-bold text-emerald-400">Lexicon-Statistical + VADER</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aspect-Based Sentiment Analysis (ABSA) -->
+                        <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5">
+                                    <i data-lucide="crosshair" class="w-3.5 h-3.5 text-emerald-400"></i> Aspect-Based Sentiment Breakdown (ABSA)
+                                </span>
+                                <span id="aspects-count-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+                                    0 detected
+                                </span>
+                            </div>
+                            <div id="aspects-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+                        </div>
+
+                        <!-- Gemini LLM Deep Insights Box -->
+                        <div id="gemini-insights-container"></div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB 2: BATCH & DATASET ANALYSIS                                      -->
+        <!-- ==================================================================== -->
+        <div id="tab-batch" class="tab-pane hidden">
+            <div class="flex flex-col gap-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+                    <div id="batch-drop-zone" class="md:col-span-8 p-7 rounded-3xl border-2 border-dashed border-emerald-500/30 hover:border-emerald-400 bg-white/60 dark:bg-zinc-900/60 transition cursor-pointer flex flex-col items-center justify-center text-center">
+                        <input type="file" id="batch-file-input" accept=".csv, .json" class="hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2 border border-emerald-500/30">
+                            <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-zinc-100">Drag and drop a CSV or JSON file here</h4>
+                        <p class="text-xs text-zinc-400 mt-0.5">Supports multi-channel reviews, support tickets, tweets (up to 500 rows)</p>
+                    </div>
+
+                    <div class="md:col-span-4 p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-400 mb-2">Try Demo Dataset</h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Don't have a dataset ready? Load our pre-configured multi-channel review dataset with one click.
+                            </p>
+                        </div>
+                        <div class="flex flex-col gap-2 mt-4">
+                            <button id="btn-load-demo-batch" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20">
+                                <i data-lucide="play" class="w-3.5 h-3.5"></i> Load Demo Reviews
+                            </button>
+                            <a href="/api/sample-csv" class="w-full py-2 px-3 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 font-semibold text-xs text-center transition flex items-center justify-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Sample CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="batch-progress-box" class="hidden p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10">
+                    <div class="flex justify-between text-xs font-bold text-emerald-400 mb-1.5">
+                        <span id="batch-status-text">Processing dataset...</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                        <div id="batch-progress-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div id="batch-results-area" class="hidden flex flex-col gap-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+                        <div class="p-4 rounded-2xl border border-emerald-500/20 bg-white dark:bg-zinc-900 shadow-sm">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Total Records</span>
+                            <h3 id="kpi-total-analyzed" class="text-xl font-black text-zinc-100 mt-1">0</h3>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 shadow-sm">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Positive</span>
+                            <h3 id="kpi-pos-pct" class="text-xl font-black text-emerald-400 mt-1">0%</h3>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-zinc-700 bg-zinc-900 shadow-sm">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Neutral</span>
+                            <h3 id="kpi-neu-pct" class="text-xl font-black text-zinc-300 mt-1">0%</h3>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-sm">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-rose-400">Negative</span>
+                            <h3 id="kpi-neg-pct" class="text-xl font-black text-rose-400 mt-1">0%</h3>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-emerald-500/20 bg-white dark:bg-zinc-900 shadow-sm">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Avg Polarity</span>
+                            <h3 id="kpi-avg-compound" class="text-xl font-black text-emerald-400 mt-1">+0.00</h3>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-emerald-500/20 bg-white dark:bg-zinc-900 shadow-sm">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Net Score (NSS)</span>
+                            <h3 id="kpi-net-sentiment" class="text-xl font-black text-emerald-400 mt-1">+0.0</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                        <div class="md:col-span-5 p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">Sentiment Distribution</h4>
+                            <div class="h-56 relative">
+                                <canvas id="batchDonutChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">Dominant Emotions Breakdown</h4>
+                            <div class="h-56 relative">
+                                <canvas id="batchBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <div class="relative w-full sm:w-64">
+                                    <input type="text" id="batch-table-search" placeholder="Search text or aspect..." class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-emerald-500/25 bg-zinc-950 text-xs focus:ring-1 focus:ring-emerald-500 outline-none text-zinc-100">
+                                    <i data-lucide="search" class="w-3.5 h-3.5 text-emerald-500/70 absolute left-2.5 top-2.5"></i>
+                                </div>
+                                <select id="batch-filter-sentiment" class="py-1.5 px-3 rounded-xl border border-emerald-500/25 bg-zinc-950 text-xs outline-none text-zinc-200">
+                                    <option value="all">All Sentiments</option>
+                                    <option value="positive">Positive Only</option>
+                                    <option value="neutral">Neutral Only</option>
+                                    <option value="negative">Negative Only</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                <button id="btn-export-csv" class="px-3 py-1.5 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition">
+                                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Export CSV
+                                </button>
+                                <button id="btn-export-json" class="px-3 py-1.5 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition">
+                                    <i data-lucide="file-json" class="w-3.5 h-3.5"></i> Export JSON
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-emerald-500/20 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                                        <th class="py-2.5 px-4 w-12">#</th>
+                                        <th class="py-2.5 px-4">Content</th>
+                                        <th class="py-2.5 px-4 w-32">Classification</th>
+                                        <th class="py-2.5 px-4 w-24">Polarity</th>
+                                        <th class="py-2.5 px-4 w-32">Dominant Emotion</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batch-table-body"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="batch-pagination" class="flex items-center justify-between pt-4 mt-2 border-t border-emerald-500/15"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB 3: SIDE-BY-SIDE COMPARE                                          -->
+        <!-- ==================================================================== -->
+        <div id="tab-compare" class="tab-pane hidden">
+            <div class="flex flex-col gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Compare Presets:</span>
+                    <div id="compare-presets-container" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col gap-3">
+                        <div class="flex items-center justify-between">
+                            <input type="text" id="compare-label-a" value="Item A" class="font-extrabold text-sm bg-transparent border-b border-emerald-500/40 pb-0.5 outline-none focus:border-emerald-400 text-emerald-400">
+                            <span class="text-[10px] text-zinc-400 uppercase font-black">Side A</span>
+                        </div>
+                        <textarea id="compare-text-a" rows="5" placeholder="Enter first text or review..." class="w-full p-3 rounded-2xl border border-emerald-500/20 bg-zinc-950 text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-zinc-100"></textarea>
+                    </div>
+
+                    <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col gap-3">
+                        <div class="flex items-center justify-between">
+                            <input type="text" id="compare-label-b" value="Item B" class="font-extrabold text-sm bg-transparent border-b border-emerald-500/40 pb-0.5 outline-none focus:border-emerald-400 text-green-300">
+                            <span class="text-[10px] text-zinc-400 uppercase font-black">Side B</span>
+                        </div>
+                        <textarea id="compare-text-b" rows="5" placeholder="Enter second text or review..." class="w-full p-3 rounded-2xl border border-emerald-500/20 bg-zinc-950 text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-zinc-100"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button id="btn-run-compare" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 font-black text-xs shadow-md shadow-emerald-500/25 transition flex items-center gap-2">
+                        <i data-lucide="scale" class="w-4 h-4"></i> Run Sentiment Comparison
+                    </button>
+                </div>
+
+                <div id="compare-results-container" class="hidden flex flex-col gap-5">
+                    <div id="compare-delta-banner"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-5 rounded-3xl border border-emerald-500/20 bg-zinc-900 shadow-md flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <h4 id="side-a-title" class="font-bold text-sm">Item A</h4>
+                                <span id="side-a-badge" class="px-2.5 py-1 rounded-full text-xs font-bold border">Neutral</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xs text-zinc-400">Score:</span>
+                                <span id="side-a-score" class="text-xl font-black">+0.00</span>
+                                <span class="text-xs text-zinc-400 ml-auto">Dominant: <strong id="side-a-emotion">Neutral</strong></span>
+                            </div>
+                            <div class="pt-2 border-t border-emerald-500/15">
+                                <span class="text-[11px] font-semibold text-zinc-400 block mb-1.5">Detected Aspects:</span>
+                                <div id="side-a-aspects" class="flex flex-wrap gap-1.5"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 rounded-3xl border border-emerald-500/20 bg-zinc-900 shadow-md flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <h4 id="side-b-title" class="font-bold text-sm">Item B</h4>
+                                <span id="side-b-badge" class="px-2.5 py-1 rounded-full text-xs font-bold border">Neutral</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xs text-zinc-400">Score:</span>
+                                <span id="side-b-score" class="text-xl font-black">+0.00</span>
+                                <span class="text-xs text-zinc-400 ml-auto">Dominant: <strong id="side-b-emotion">Neutral</strong></span>
+                            </div>
+                            <div class="pt-2 border-t border-emerald-500/15">
+                                <span class="text-[11px] font-semibold text-zinc-400 block mb-1.5">Detected Aspects:</span>
+                                <div id="side-b-aspects" class="flex flex-wrap gap-1.5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB 4: API PLAYGROUND                                                -->
+        <!-- ==================================================================== -->
+        <div id="tab-api" class="tab-pane hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="send" class="w-3.5 h-3.5 text-emerald-500"></i> Interactive API Request Bench
+                        </h4>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">REST API</span>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <select id="api-test-endpoint" class="w-full py-2 px-3 rounded-xl border border-emerald-500/25 bg-zinc-950 text-xs font-mono outline-none text-zinc-200">
+                            <option value="/api/analyze">POST /api/analyze</option>
+                            <option value="/api/catalog?type=electronics">GET /api/catalog (Electronics)</option>
+                            <option value="/api/catalog?type=movie">GET /api/catalog (Movies)</option>
+                            <option value="/api/batch">POST /api/batch</option>
+                            <option value="/api/compare">POST /api/compare</option>
+                            <option value="/api/network-info">GET /api/network-info</option>
+                            <option value="/api/stats">GET /api/stats</option>
+                        </select>
+                        <button id="btn-run-api-test" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs transition flex-shrink-0">
+                            Send
+                        </button>
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] font-semibold text-zinc-400 block mb-1">Request JSON Body:</label>
+                        <textarea id="api-test-payload" rows="6" class="w-full p-3 rounded-2xl font-mono text-xs border border-emerald-500/20 bg-zinc-950 text-emerald-400 outline-none">
+{
+  "text": "The camera on this phone is truly phenomenal with crisp 4K video!"
+}</textarea>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="text-[11px] font-semibold text-zinc-400">Response JSON:</label>
+                            <span id="api-test-status" class="text-[11px] text-zinc-400">Ready</span>
+                        </div>
+                        <pre id="api-test-response" class="w-full p-3 rounded-2xl font-mono text-xs border border-emerald-500/20 bg-zinc-950 text-zinc-300 overflow-x-auto max-h-64">// Click 'Send' to trigger endpoint response</pre>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="code" class="w-3.5 h-3.5 text-emerald-500"></i> Integration Code Snippets
+                        </h4>
+                        <button id="btn-copy-code" class="text-xs text-emerald-400 hover:underline flex items-center gap-1 font-bold">
+                            <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                        </button>
+                    </div>
+
+                    <div class="flex gap-1.5">
+                        <button data-lang="python" class="api-lang-tab px-3 py-1 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition">Python</button>
+                        <button data-lang="javascript" class="api-lang-tab px-3 py-1 rounded-xl text-xs font-semibold bg-zinc-800 text-zinc-300 transition">JavaScript</button>
+                        <button data-lang="curl" class="api-lang-tab px-3 py-1 rounded-xl text-xs font-semibold bg-zinc-800 text-zinc-300 transition">cURL</button>
+                    </div>
+
+                    <pre class="w-full flex-1 p-4 rounded-2xl font-mono text-xs border border-emerald-500/20 bg-zinc-950 text-zinc-200 overflow-x-auto"><code id="api-code-snippet"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB 5: HISTORY                                                       -->
+        <!-- ==================================================================== -->
+        <div id="tab-history" class="tab-pane hidden">
+            <div class="max-w-3xl mx-auto flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
+                            <i data-lucide="history" class="w-4 h-4 text-emerald-400"></i> Persistent Sentiment History
+                        </h3>
+                        <p class="text-xs text-zinc-400">All selected catalog items and custom analyses automatically saved in storage.</p>
+                    </div>
+                    <button id="btn-clear-history" class="px-3 py-1.5 rounded-xl border border-rose-500/30 hover:bg-rose-500/10 text-rose-400 text-xs font-bold transition flex items-center gap-1.5">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear History
+                    </button>
+                </div>
+
+                <div id="history-empty-state" class="p-8 text-center border border-dashed border-emerald-500/30 rounded-3xl text-zinc-400 text-xs">
+                    No analyses recorded yet. Select any item from the catalog to auto-populate your history.
+                </div>
+
+                <div id="history-items-container" class="flex flex-col gap-2.5"></div>
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB 6: ACADEMIC NLP BENCHMARKS & EXPLAINABLE AI (XAI)                -->
+        <!-- ==================================================================== -->
+        <div id="tab-academic" class="tab-pane hidden">
+            <div class="flex flex-col gap-6">
+
+                <!-- Header / Academic Suite Hero Banner -->
+                <div class="p-6 sm:p-7 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-zinc-950 via-[#131216] to-zinc-900 shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-2.5">
+                                <i data-lucide="award" class="w-3.5 h-3.5 text-emerald-300"></i> Peer-Review Benchmark Suite
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Academic NLP Benchmarks & Explainability (XAI)</h2>
+                            <p class="text-xs sm:text-sm text-zinc-300 mt-1 max-w-2xl leading-relaxed">
+                                University-level model verification: Gold-standard 60-sample evaluation, 3×3 confusion matrix, precision/recall/F1, 5-fold cross-validation, and token-level lexical attribution vectors.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button id="btn-run-academic-benchmark" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-green-600 hover:from-emerald-600 hover:to-green-700 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/25 transition flex items-center gap-1.5 whitespace-nowrap">
+                                <i data-lucide="play" class="w-4 h-4"></i> Run Live Benchmark Suite
+                            </button>
+                            <button id="btn-export-academic-json" class="px-3.5 py-2.5 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 font-bold text-xs transition flex items-center gap-1.5 whitespace-nowrap">
+                                <i data-lucide="download" class="w-4 h-4"></i> Export JSON Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Primary Statistical Metrics Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                    
+                    <!-- Accuracy -->
+                    <div class="col-span-2 p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm flex flex-col justify-between">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Model Accuracy</span>
+                        <div class="my-2">
+                            <span id="academic-accuracy" class="text-3xl font-black text-emerald-400">86.7%</span>
+                            <span class="text-[10px] text-zinc-500 block mt-0.5">Gold Standard Corpus</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                            <div id="academic-accuracy-gauge" class="h-full bg-gradient-to-r from-emerald-500 to-green-400" style="width: 86.7%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Macro F1 -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Macro F1</span>
+                        <span id="academic-f1" class="text-2xl font-black text-emerald-400 block mt-2">0.867</span>
+                        <span class="text-[9px] text-zinc-500 mt-1 block">Harmonic Mean</span>
+                    </div>
+
+                    <!-- Macro Precision -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Precision</span>
+                        <span id="academic-precision" class="text-2xl font-black text-emerald-400 block mt-2">0.868</span>
+                        <span class="text-[9px] text-zinc-500 mt-1 block">Macro Average</span>
+                    </div>
+
+                    <!-- Macro Recall -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Recall</span>
+                        <span id="academic-recall" class="text-2xl font-black text-emerald-400 block mt-2">0.867</span>
+                        <span class="text-[9px] text-zinc-500 mt-1 block">Macro Average</span>
+                    </div>
+
+                    <!-- Cohen's Kappa -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Cohen's κ</span>
+                        <span id="academic-kappa" class="text-2xl font-black text-emerald-400 block mt-2">0.800</span>
+                        <span class="text-[9px] text-zinc-500 mt-1 block">Inter-Rater Agreement</span>
+                    </div>
+
+                    <!-- MCC -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">MCC</span>
+                        <span id="academic-mcc" class="text-2xl font-black text-emerald-400 block mt-2">0.801</span>
+                        <span class="text-[9px] text-zinc-500 mt-1 block">Matthews Correlation</span>
+                    </div>
+
+                    <!-- Latency & Throughput -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-sm">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Latency</span>
+                        <span id="academic-latency" class="text-2xl font-black text-emerald-400 block mt-2">0.89 ms</span>
+                        <span id="academic-throughput" class="text-[9px] text-zinc-500 mt-1 block font-mono">1100/sec</span>
+                    </div>
+
+                </div>
+
+                <!-- Confusion Matrix & Class Metrics Table (2 cols) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- 3x3 Heatmap (6 cols) -->
+                    <div class="lg:col-span-6 p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                        <div class="flex items-center justify-between mb-3 border-b border-emerald-500/15 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="grid" class="w-4 h-4 text-emerald-400"></i>
+                                <h3 class="font-extrabold text-sm text-slate-900 dark:text-zinc-100">3×3 Confusion Matrix Heatmap</h3>
+                            </div>
+                            <span class="text-[10px] font-semibold text-zinc-400">N = 60 Rigorous Samples</span>
+                        </div>
+                        <p class="text-[11px] text-zinc-400 mb-4">Diagonal cells show True Positives. Color intensity reflects agreement percentage.</p>
+                        <div id="academic-confusion-matrix"></div>
+                    </div>
+
+                    <!-- Class Metrics Breakdown & 5-Fold Cross Validation (6 cols) -->
+                    <div class="lg:col-span-6 flex flex-col gap-4">
+                        <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md flex-1">
+                            <div class="flex items-center justify-between mb-3 border-b border-emerald-500/15 pb-2.5">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i>
+                                    <h3 class="font-extrabold text-sm text-slate-900 dark:text-zinc-100">Per-Class Statistical Metrics</h3>
+                                </div>
+                                <span class="text-[10px] font-semibold text-emerald-400">Balanced 3-Way Split</span>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-emerald-500/20 text-[10px] font-bold text-zinc-400 uppercase">
+                                            <th class="py-2 px-3">Class</th>
+                                            <th class="py-2 px-3">Precision</th>
+                                            <th class="py-2 px-3">Recall</th>
+                                            <th class="py-2 px-3">F1-Score</th>
+                                            <th class="py-2 px-3">Support</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="academic-class-metrics-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 5-Fold Cross-Validation -->
+                        <div id="academic-cv-container" class="p-4 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md"></div>
+                    </div>
+
+                </div>
+
+                <!-- Explainable AI (XAI): Token-Level Attribution Playground -->
+                <div class="p-6 rounded-3xl border border-emerald-500/30 bg-white/85 dark:bg-zinc-900/85 shadow-lg backdrop-blur-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-emerald-500/15 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center glow-emerald">
+                                <i data-lucide="microscope" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-sm text-slate-900 dark:text-zinc-100">Explainable AI (XAI) · Token-Level Valence Attribution</h3>
+                                <p class="text-[11px] text-zinc-400">Inspect exact mathematical contribution of individual words, negations, and intensifiers.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-zinc-400">Score:</span>
+                            <span id="xai-compound-score" class="font-mono text-base font-black text-emerald-400">+0.85</span>
+                            <span id="xai-label-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">Positive</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Box & Presets -->
+                    <div class="flex flex-col gap-3 mb-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="xai-input-sentence" value="The camera is breathtaking and screen is vivid, but the customer service was utterly rude." placeholder="Enter any complex sentence to explain..." class="flex-1 p-3 rounded-2xl border border-emerald-500/25 bg-slate-50 dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500">
+                            <button id="btn-run-xai-explain" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 font-black text-xs shadow-md transition whitespace-nowrap flex items-center gap-1.5">
+                                <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Explain
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-[11px]">
+                            <span class="text-zinc-400 font-semibold">Test Presets:</span>
+                            <button class="xai-preset-chip px-2.5 py-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition" data-text="The camera is breathtaking and screen is vivid, but the customer service was utterly rude.">Mixed Nuance</button>
+                            <button class="xai-preset-chip px-2.5 py-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition" data-text="Oh brilliant, another software update that deletes my custom shortcuts and crashes Bluetooth! 🙄">Sarcasm & Emoji</button>
+                            <button class="xai-preset-chip px-2.5 py-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition" data-text="Not bad at all, in fact it is remarkably good and highly competent.">Double Negation</button>
+                        </div>
+                    </div>
+
+                    <!-- Word Attribution Badges Container -->
+                    <div class="p-4 rounded-2xl border border-emerald-500/20 bg-zinc-950/70 min-h-[110px] flex items-center">
+                        <div id="xai-tokens-container" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- Top Discriminative Features (2 cols) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Positive Features -->
+                    <div class="p-5 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                        <div class="flex items-center justify-between mb-3 border-b border-emerald-500/15 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                                <h3 class="font-extrabold text-sm text-slate-900 dark:text-zinc-100">Top Positive Discriminative N-Grams</h3>
+                            </div>
+                            <span class="text-[10px] font-mono text-emerald-400">TF-IDF Log-Odds</span>
+                        </div>
+                        <div id="academic-top-positive-features" class="flex flex-col gap-2"></div>
+                    </div>
+
+                    <!-- Negative Features -->
+                    <div class="p-5 rounded-3xl border border-rose-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                        <div class="flex items-center justify-between mb-3 border-b border-rose-500/15 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trending-down" class="w-4 h-4 text-rose-400"></i>
+                                <h3 class="font-extrabold text-sm text-slate-900 dark:text-zinc-100">Top Negative Discriminative N-Grams</h3>
+                            </div>
+                            <span class="text-[10px] font-mono text-rose-400">TF-IDF Log-Odds</span>
+                        </div>
+                        <div id="academic-top-negative-features" class="flex flex-col gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Mathematical Formulations & Rigor -->
+                <div class="p-6 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                    <div class="flex items-center gap-2.5 mb-4 border-b border-emerald-500/15 pb-3">
+                        <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
+                        <h3 class="font-black text-sm text-slate-900 dark:text-zinc-100">Mathematical Specifications & Hybrid Ensemble Architecture</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-emerald-500/20">
+                            <h4 class="font-bold text-emerald-400 mb-1">1. Soft Valence Normalization</h4>
+                            <p class="text-[11px] text-zinc-400 mb-2">VADER sigmoidal compound equation mapping raw sum to [-1.0, +1.0]:</p>
+                            <code class="font-mono text-emerald-300 text-[11px] block p-2 rounded-xl bg-zinc-900 border border-emerald-500/30 overflow-x-auto">
+                                C = V_raw / sqrt(V_raw² + 15)
+                            </code>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-emerald-500/20">
+                            <h4 class="font-bold text-emerald-400 mb-1">2. Modifier Propagation</h4>
+                            <p class="text-[11px] text-zinc-400 mb-2">Booster intensifiers & negation scope resolution window [-3, +1]:</p>
+                            <code class="font-mono text-emerald-300 text-[11px] block p-2 rounded-xl bg-zinc-900 border border-emerald-500/30 overflow-x-auto">
+                                v_i' = v_i · (1 + β_boost) · (-0.74)^neg
+                            </code>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-emerald-500/20">
+                            <h4 class="font-bold text-emerald-400 mb-1">3. Hybrid Ensemble Convexity</h4>
+                            <p class="text-[11px] text-zinc-400 mb-2">Convex combination of rule-based valence and TF-IDF linear classifier:</p>
+                            <code class="font-mono text-emerald-300 text-[11px] block p-2 rounded-xl bg-zinc-900 border border-emerald-500/30 overflow-x-auto">
+                                S = 0.65 · C_lex + 0.35 · (2·P_ML - 1)
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Citation & BibTeX Box -->
+                <div class="p-6 rounded-3xl border border-emerald-500/25 bg-white/80 dark:bg-zinc-900/80 shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-4 h-4 text-emerald-400"></i>
+                            <h3 class="font-black text-sm text-slate-900 dark:text-zinc-100">Project BibTeX Citation & Reproducibility</h3>
+                        </div>
+                        <button id="btn-copy-bibtex" class="px-3 py-1.5 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 text-xs font-bold transition flex items-center gap-1.5">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy BibTeX
+                        </button>
+                    </div>
+                    <pre class="p-4 rounded-2xl bg-zinc-950 text-emerald-300/90 font-mono text-xs overflow-x-auto border border-emerald-500/20"><code id="academic-bibtex-block">Loading BibTeX...</code></pre>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-emerald-500/20 bg-white/80 dark:bg-[#0d0e12]/80 backdrop-blur-md py-4 text-center text-xs text-zinc-400 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>Sentix AI Platform · Emerald Obsidian Edition · Real-time Valence Engine</span>
+            <span>Local Access: <code class="font-mono text-emerald-400 font-bold">http://{{ local_ip }}:5000</code></span>
+        </div>
+    </footer>
+
+    <!-- ==================================================================== -->
+    <!-- MODAL 1: ITEM REVIEW & INSPECTION STUDIO                             -->
+    <!-- ==================================================================== -->
+    <div id="item-review-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-lg p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#111216] rounded-3xl border border-emerald-500/30 shadow-2xl max-w-4xl w-full p-6 sm:p-7 flex flex-col gap-5 max-h-[92vh] overflow-y-auto my-auto transition-all">
+            
+            <!-- Top Header & Close -->
+            <div class="flex items-start justify-between gap-4 border-b border-emerald-500/15 pb-4">
+                <div class="flex items-center gap-4">
+                    <img id="modal-item-image" src="" alt="Thumbnail" class="w-16 h-16 rounded-2xl object-cover shadow-md border border-emerald-500/30">
+                    <div>
+                        <span id="modal-item-category" class="text-[10px] font-black uppercase tracking-wider text-emerald-400">Electronics</span>
+                        <h3 id="modal-item-title" class="text-lg sm:text-xl font-black text-slate-900 dark:text-zinc-100">Item Name</h3>
+                        <p id="modal-item-tagline" class="text-xs text-zinc-400 line-clamp-1"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="modal-btn-send-to-live" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 text-xs font-black shadow-md shadow-emerald-500/20 transition flex items-center gap-1.5" title="Analyze this full item in the Live Studio and record in history">
+                        <i data-lucide="zap" class="w-3.5 h-3.5"></i> <span>Send to Live Studio</span>
+                    </button>
+                    <button id="btn-close-review-modal" class="p-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Grid: Left (Metrics & Community) vs Right (Review Studio) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <div class="lg:col-span-6 flex flex-col gap-4">
+                    <div class="p-4 rounded-2xl border border-emerald-500/20 bg-zinc-950/70 flex flex-col gap-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-400">Community Sentiment</span>
+                            <span id="modal-sentiment-label" class="px-2.5 py-0.5 rounded-full text-xs font-bold border">Positive</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-xs text-zinc-400">Compound Valence:</span>
+                            <span id="modal-sentiment-score" class="text-2xl font-black text-emerald-400">+0.85</span>
+                            <span id="modal-emotion-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Emotion: Joy</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs font-semibold">
+                            <span id="modal-pos-pct" class="text-emerald-400">92% Pos</span>
+                            <span class="text-zinc-700">·</span>
+                            <span id="modal-neg-pct" class="text-rose-400">8% Neg</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl border border-emerald-500/20 bg-zinc-950/70">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2.5">Aspect-Based Sentiment</h4>
+                        <div id="modal-aspects-list" class="flex flex-col gap-1"></div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-zinc-300">Live Community Reviews</h4>
+                            <span id="modal-reviews-count" class="text-[11px] text-emerald-400 font-semibold">3 Verified Reviews</span>
+                        </div>
+                        <div id="modal-reviews-feed" class="flex flex-col gap-2.5 max-h-56 overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 p-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-zinc-900 to-zinc-950 flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="message-square-plus" class="w-4 h-4 text-emerald-400"></i>
+                                <h4 class="font-bold text-sm text-zinc-100">Write Your Review</h4>
+                            </div>
+                            <span id="modal-review-live-badge" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-800 text-zinc-400">
+                                Type to preview sentiment
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-xs text-zinc-400 font-medium">Your Rating:</span>
+                            <div class="flex items-center gap-1">
+                                <button type="button" data-star="1" class="star-rating-btn text-emerald-400 hover:scale-125 transition text-base">★</button>
+                                <button type="button" data-star="2" class="star-rating-btn text-emerald-400 hover:scale-125 transition text-base">★</button>
+                                <button type="button" data-star="3" class="star-rating-btn text-emerald-400 hover:scale-125 transition text-base">★</button>
+                                <button type="button" data-star="4" class="star-rating-btn text-emerald-400 hover:scale-125 transition text-base">★</button>
+                                <button type="button" data-star="5" class="star-rating-btn text-emerald-400 hover:scale-125 transition text-base">★</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="text-[11px] font-semibold text-zinc-400 block mb-1">Your Name / Handle:</label>
+                            <input type="text" id="modal-review-author" placeholder="e.g. Alex TechEnthusiast" class="w-full p-2.5 rounded-xl border border-emerald-500/20 bg-zinc-950 text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-zinc-100">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="text-[11px] font-semibold text-zinc-400 block mb-1">Review Experience & Opinion:</label>
+                            <textarea id="modal-review-input" rows="5" placeholder="Share your honest experience..." class="w-full p-3 rounded-2xl border border-emerald-500/20 bg-zinc-950 text-xs outline-none focus:ring-2 focus:ring-emerald-500 text-zinc-100 resize-none"></textarea>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 flex-wrap mb-4">
+                            <span class="text-[10px] text-zinc-400">Presets:</span>
+                            <button type="button" class="modal-review-preset text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-500/25 bg-zinc-900 text-emerald-300 hover:bg-emerald-500/15" data-text="Absolute masterpiece! Flawless quality and exceeded every expectation.">🌟 Masterpiece</button>
+                            <button type="button" class="modal-review-preset text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-500/25 bg-zinc-900 text-zinc-300 hover:bg-emerald-500/15" data-text="Decent overall, has good features but slightly overpriced for what it offers.">⚖️ Mixed</button>
+                            <button type="button" class="modal-review-preset text-[10px] px-2.5 py-0.5 rounded-full border border-rose-500/30 bg-zinc-900 text-rose-300 hover:bg-rose-500/15" data-text="Very disappointing. Slow, buggy, and poor quality. Would not recommend.">😡 Disappointed</button>
+                        </div>
+                    </div>
+
+                    <button id="btn-submit-review" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 font-black text-xs shadow-md shadow-emerald-500/25 transition flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit Review
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- MODAL 2: QR CODE & PUBLIC REMOTE NETWORK ACCESS                      -->
+    <!-- ==================================================================== -->
+    <div id="qr-access-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-lg p-4">
+        <div class="bg-white dark:bg-[#111216] rounded-3xl border border-emerald-500/30 shadow-2xl max-w-lg w-full p-6 flex flex-col gap-5">
+            
+            <div class="flex items-center justify-between border-b border-emerald-500/15 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shadow-sm">
+                        <i data-lucide="qr-code" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-sm text-slate-900 dark:text-zinc-100">Access Sentix from Any Device</h3>
+                        <p class="text-[11px] text-zinc-400">Scan QR Code or Share Public Tunnel Link</p>
+                    </div>
+                </div>
+                <button id="btn-close-qr-modal" class="text-zinc-400 hover:text-zinc-100 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Network Mode Tabs -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-zinc-950 border border-emerald-500/20 text-xs font-bold">
+                <button id="qr-tab-local" class="py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 shadow-sm transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="wifi" class="w-3.5 h-3.5"></i> Same Wi-Fi Network
+                </button>
+                <button id="qr-tab-public" class="py-2 px-3 rounded-xl bg-transparent text-zinc-400 hover:text-emerald-400 transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="globe" class="w-3.5 h-3.5"></i> Different Networks
+                </button>
+            </div>
+
+            <!-- Local Wi-Fi Panel -->
+            <div id="qr-local-panel" class="flex flex-col items-center text-center">
+                <div class="p-3.5 rounded-3xl bg-white border border-emerald-500/30 shadow-inner mb-3">
+                    <img id="qr-code-img" src="/api/qrcode?url=http://{{ local_ip }}:5000" alt="QR Code" class="w-48 h-48 rounded-xl">
+                </div>
+                <p class="text-xs text-zinc-400 max-w-sm">
+                    Scan with your smartphone camera while connected to the same Wi-Fi router to open Sentix instantly on your phone!
+                </p>
+            </div>
+
+            <!-- Worldwide Public Network Panel -->
+            <div id="qr-public-panel" class="hidden flex flex-col gap-3">
+                <div class="p-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 text-xs text-zinc-300 flex flex-col gap-1.5">
+                    <div class="flex items-center gap-1.5 font-bold text-emerald-400">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Free Public HTTPS Tunnel (Cloudflare)
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-zinc-400">
+                        To access Sentix from cellular 4G/5G or outside networks without port forwarding, launch:
+                    </p>
+                    <code class="font-mono text-[11px] p-2 rounded-xl bg-zinc-950 text-emerald-400 overflow-x-auto select-all border border-emerald-500/30">
+                        .\start_public_tunnel.bat
+                    </code>
+                </div>
+
+                <!-- Input & Action Controls -->
+                <div>
+                    <label class="text-[11px] font-semibold text-zinc-300 block mb-1">Enter / Paste Public Tunnel URL:</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="qr-public-url-input" placeholder="https://your-tunnel.trycloudflare.com" class="flex-1 p-2.5 rounded-xl border border-emerald-500/30 bg-zinc-950 text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 text-zinc-100">
+                        <button id="btn-apply-public-url" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-slate-950 font-black text-xs shadow-sm transition flex items-center gap-1 whitespace-nowrap">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Update QR
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between mt-1.5">
+                        <span class="text-[10px] text-zinc-500">Live updates as you type or paste</span>
+                        <button id="btn-sample-tunnel-url" class="text-[10px] text-emerald-400 hover:underline font-bold flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Test Sample Tunnel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dedicated Public QR Code Display -->
+                <div class="flex flex-col items-center text-center p-3 rounded-2xl bg-black/60 border border-emerald-500/30 shadow-inner">
+                    <div class="p-3 rounded-2xl bg-white border border-emerald-500/40 shadow-md mb-2">
+                        <img id="qr-public-code-img" src="/api/qrcode?url=https://sentix-tunnel.trycloudflare.com" alt="Public QR Code" class="w-44 h-44 rounded-lg object-contain transition-all duration-300">
+                    </div>
+                    <div id="qr-public-status-badge" class="text-[11px] font-bold text-emerald-400 flex items-center justify-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5"></span> Live Public QR Ready to Scan
+                    </div>
+                    <p class="text-[10px] text-zinc-400 mt-0.5 max-w-xs">
+                        Scan from ANY device on cellular (4G/5G) or outside networks. Target: <span id="qr-public-current-url-span" class="font-mono text-emerald-300 font-bold break-all">https://sentix-tunnel.trycloudflare.com</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Target URL & Action Buttons -->
+            <div class="pt-3 border-t border-emerald-500/15 flex items-center justify-between gap-2">
+                <div class="flex-1 min-w-0">
+                    <span class="text-[10px] text-zinc-400 uppercase font-bold block">Current Access URL:</span>
+                    <span id="qr-current-url-display" class="font-mono text-xs text-emerald-400 truncate block font-bold">http://{{ local_ip }}:5000</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <button id="btn-copy-access-url" class="px-3 py-1.5 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-xs font-bold text-emerald-400 transition flex items-center gap-1">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Link
+                    </button>
+                    <button id="btn-open-target-url" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 text-xs font-black shadow-sm transition flex items-center gap-1">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- MODAL 3: GEMINI API KEY CONFIGURATION                                -->
+    <!-- ==================================================================== -->
+    <div id="gemini-key-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-lg p-4">
+        <div class="bg-white dark:bg-[#111216] rounded-3xl border border-emerald-500/30 shadow-2xl max-w-md w-full p-6 flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-zinc-100">Configure Gemini LLM</h3>
+                </div>
+                <button id="btn-close-gemini-modal" class="text-zinc-400 hover:text-zinc-100">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-zinc-400 leading-relaxed">
+                Connect your Google Gemini API Key to enable deep semantic nuance, sarcasm explanations, tone subtext, and actionable business recommendations.
+            </p>
+
+            <div>
+                <label class="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block mb-1">Gemini API Key:</label>
+                <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..." class="w-full p-2.5 rounded-xl border border-emerald-500/25 bg-zinc-950 text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 text-zinc-100">
+                <span class="text-[10px] text-zinc-500 mt-1 block">Stored securely in your browser's localStorage. Never sent to third parties.</span>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <button id="btn-remove-gemini-key" class="text-xs text-rose-400 hover:underline font-semibold">Remove Key</button>
+                <button id="btn-save-gemini-key" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 text-xs font-black transition">
+                    Save Key
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/motion.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/catalog.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/qrcode_modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/batch.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compare.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api_tester.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/academic.js') }}"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
